@@ -1,26 +1,29 @@
-import customtkinter as ctk # pip install customtkinter 
-import tkinter
+import customtkinter as ctk    # customtkinter  5.2.2
+import tkinter                 # tk             0.1.0
 import os
-from openai import OpenAI # `\_(@@)_/'
-#import openai # pip install openai  pip install openai==0.28
-from PIL import Image, ImageTk
-import requests, io
+import openai                  # openai         0.28.0  '\_(@@)_/'
+from PIL import Image, ImageTk # pillow         10.2.0
+import requests, io            # requests       2.31.0
 
-# openai.Images.create
-# os.getenv("OPENAI_API_KEY")
-# ...this is also the defaul, it can omitted
 def generate():
-    openai = OpenAI(api_key = os.environ['OPENAI_API_KEY'])
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    """
+    api_key = os.getenv("OPENAI_API_KEY")
+    if api_key is None:
+        raise ValueError("OPENAI_API_KEY environment variable not found.")
+    api_key(api_key=api_key)
+    print("OPENAI_API_KEY!!!")
+    """
     user_prompt = prompt_entry.get("0.0", tkinter.END)
     user_prompt += "in style: " + style_dropdown.get()
 
-    response = openai.images.generate(
+    response = openai.Image.create(
         prompt=user_prompt,
         n=int(number_slider.get()),
         size="512x512")
     
     image_urls = []
-    for i in range(len(response['data'])):   # 3
+    for i in range(len(response['data'])):
         image_urls.append(response['data'][i]['url'])
     print(image_urls)
     
@@ -38,14 +41,6 @@ def generate():
         canvas.after(3000, update_image, index)
 
     update_image()
-#   image_url = response['data'][0]['url']
-#    print(image_url) 
-#    response = requests.get(image_url)
-#    image = Image.open(io.BytesIO(response.content))
-#    image = ImageTk.PhotoImage(image)
-    
-#    canvas.image = image
-#    canvas.create_image(0, 0, anchor="nw", image=images)
 
 root = ctk.CTk()
 root.title("AI Image Generator")
@@ -75,7 +70,5 @@ generate_button.grid(row=3, column=0, columnspan=2, sticky="news", padx=10, pady
 
 canvas = tkinter.Canvas(root, width=512, height=512)
 canvas.pack(side="left")
-
-
 
 root.mainloop()
